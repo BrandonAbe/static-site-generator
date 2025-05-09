@@ -16,9 +16,4 @@ class TextNode:
         self.url = url
 
     def __eq__(self, other):
-        if isinstance(other, TextNode): # Ensures comparison object is type(TextNode)
-            if self.text == other.text and self.text_type == other.text_type and self.url == other.url: # If true, they match
-                return True
-            else:
-                return False
-        return False
+        return isinstance(other, TextNode) and self.text == other.text and self.text_type == other.text_type and self.url == other.url # Single line check
