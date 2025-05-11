@@ -1,5 +1,4 @@
 from enum import Enum
-from pydoc import text
 
 class TextType(Enum):
     NORMAL = 'normal'
