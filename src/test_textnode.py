@@ -1,9 +1,10 @@
 import unittest
 
-from textnode import TextNode, TextType
+from textnode import TextNode, TextType, text_node_to_html_node
 
 
 class TestTextNode(unittest.TestCase):
+    # Tests for TextNode
     def test_eq(self):
         node = TextNode("This is a text node", TextType.BOLD)
         node2 = TextNode("This is a text node", TextType.BOLD)
@@ -43,6 +44,13 @@ class TestTextNode(unittest.TestCase):
         node = TextNode("", TextType.LINK, "https://example.com")
         node2 = TextNode("", TextType.LINK, "https://example.com")
         self.assertEqual(node, node2)
+
+    # Tests for TextNode to HTML Node
+    def test_text(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
 
 if __name__ == "__main__":
     unittest.main()
