@@ -37,4 +37,9 @@ def text_node_to_html_node(text_node: TextNode):
         case TextType.LINK:
             return LeafNode("a", text_node.text, {"href": text_node.url}) # a for anchor
         case TextType.IMAGE:
-            return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
+            if '|' in text_node.text:
+                src, alt_text = text_node.text.split('|',1)
+                return LeafNode("img", "", {"src": src, "alt": alt_text})
+            else:
+                return LeafNode("img", "", {"src": text_node.text, "alt": ""})
+            #return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
