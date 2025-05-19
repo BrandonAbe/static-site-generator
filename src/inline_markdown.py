@@ -1,38 +1,44 @@
 from typing import Annotated
 from textnode import TextType, TextNode
 
-def split_nodes_delimiter(old_nodes: list, delimiter: Annotated[str, "single character"], text_type: TextType):
-    new_node = []
-    for node in old_nodes:
-        if delimiter not in node.text:
-            raise Exception("Invalid Markdown: missing delimiter")
-        # Keep unnchanged if not a TextNode
-        if node.text_type != TextType.TEXT:
-            new_node.append(node)
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    new_nodes = []
+    
+    for old_node in old_nodes:
+        # If not a text node, add it unchanged
+        if old_node.text_type != TextType.TEXT:
+            new_nodes.append(old_node)
             continue
-
-        parts = node.text.split(delimiter)
-        split_nodes = []
-
-        # Split each "node" text based on delimiter
-        sections = node.text.split(delimiter)
-
-        '''
-        Logic check: Does split lead to an even number of sections?
-        If this happens (e.g. **text), an incorrect usage of delimiters has been used
-        '''
+            
+        # Process text nodes
+        current_text = old_node.text
+        remaining_text = current_text
+        result_nodes = []
         
-        if len(sections) % 2 == 0:
-            raise Exception("Invalid Markdown: missing closing delimiters")
-        
-        
-        for i in range(len(sections)):
-            if sections[i] == "":   # If content is empty string, do nothing
-                continue
-            if i % 2 == 0:
-                split_nodes.append(TextNode(sections[i], TextType.TEXT)) # If even index, content is enum
-            else:
-                split_nodes.append(TextNode(sections[i], text_type)) # If odd index, content is text_type
-        new_node.extend(split_nodes)
+        # opening delimiter
+        while delimiter in remaining_text:
+            start_index = remaining_text.find(delimiter)
+            
+            if start_index > 0: # If there's text before the delimiter, add it as a TEXT node
+                result_nodes.append(TextNode(remaining_text[:start_index], TextType.TEXT))
+                
+            remaining_text = remaining_text[start_index + len(delimiter):] 
+            end_index = remaining_text.find(delimiter) # Find the closing delimiter
+            
+            # If no closing delimiter, raise an exception
+            if end_index == -1:
+                raise Exception(f"Invalid Markdown: missing closing delimiter '{delimiter}'")
+                
 
-    return new_node   
+            delimited_content = remaining_text[:end_index]
+            result_nodes.append(TextNode(delimited_content, text_type))  # Extract the content between delimiters
+            
+            remaining_text = remaining_text[end_index + len(delimiter):] # Continue with the rest of the text
+        
+        # Add any remaining text as a TEXT node
+        if remaining_text:
+            result_nodes.append(TextNode(remaining_text, TextType.TEXT))
+        
+        new_nodes.extend(result_nodes)
+    
+    return new_nodes
