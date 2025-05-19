@@ -11,6 +11,7 @@ def split_nodes_delimiter(old_nodes: list, delimiter: Annotated[str, "single cha
             new_node.append(node)
             continue
 
+        parts = node.text.split(delimiter)
         split_nodes = []
 
         # Split each "node" text based on delimiter
@@ -24,6 +25,7 @@ def split_nodes_delimiter(old_nodes: list, delimiter: Annotated[str, "single cha
         if len(sections) % 2 == 0:
             raise Exception("Invalid Markdown: missing closing delimiters")
         
+        
         for i in range(len(sections)):
             if sections[i] == "":   # If content is empty string, do nothing
                 continue
@@ -32,4 +34,5 @@ def split_nodes_delimiter(old_nodes: list, delimiter: Annotated[str, "single cha
             else:
                 split_nodes.append(TextNode(sections[i], text_type)) # If odd index, content is text_type
         new_node.extend(split_nodes)
+
     return new_node   
