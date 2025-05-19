@@ -72,11 +72,11 @@ class TestInlineMarkdown(unittest.TestCase):
 
     def test_delim_code(self):
         node = TextNode("This is text with a `code block` word", TextType.TEXT)
-        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE_TEXT)
         self.assertListEqual(
             [
                 TextNode("This is text with a ", TextType.TEXT),
-                TextNode("code block", TextType.CODE),
+                TextNode("code block", TextType.CODE_TEXT),
                 TextNode(" word", TextType.TEXT),
             ],
             new_nodes,
