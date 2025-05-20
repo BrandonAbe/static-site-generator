@@ -1,5 +1,6 @@
 from typing import Annotated
 from textnode import TextType, TextNode
+import re
 
 def split_nodes_delimiter(old_nodes:list, delimiter:str, text_type:enumerate):
     new_nodes = []
@@ -41,3 +42,12 @@ def split_nodes_delimiter(old_nodes:list, delimiter:str, text_type:enumerate):
         new_nodes.extend(result_nodes)
     
     return new_nodes
+
+def extract_markdown_images(text: str):
+    pattern = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    matches = re.findall(pattern, text)
+    return matches
+
+def extract_markdown_links(text: str):
+    pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    matches = re.findall(pattern,text)
