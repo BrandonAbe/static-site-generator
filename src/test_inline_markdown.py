@@ -82,7 +82,14 @@ class TestInlineMarkdown(unittest.TestCase):
             new_nodes,
         )    
 
+    # Test inline_markdown below
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images("This is text with an ![image](https://i.imgur.com/vhQLQBn.png)")
+        self.assertListEqual([("image", "https://i.imgur.com/vhQLQBn.png")], matches) # use of assertListEqual due to output being list of tuples
 
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links("This is text with a [link](https://github.com/BrandonAbe) and [another link](https://www.linkedin.com/in/brandon-rosenblatt/)")
+        self.assertListEqual([("link", "https://github.com/BrandonAbe"),("another link", "https://www.linkedin.com/in/brandon-rosenblatt/"),],matches)
 
 if __name__ == "__main__":
     unittest.main()
