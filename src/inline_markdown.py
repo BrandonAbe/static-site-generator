@@ -52,3 +52,46 @@ def extract_markdown_links(text: str):
     pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
     matches = re.findall(pattern,text)
     return matches
+
+def split_nodes_image(old_nodes: list):
+    new_nodes = []
+    
+    for old_node in old_nodes:
+        # If not a text node, add it unchanged
+        if old_node.text_type != TextType.TEXT:
+            new_nodes.append(old_node)
+            continue
+        
+        # Split up each node in old_nodes
+        original_text = old_node.text
+        images = extract_markdown_images(original_text)
+    
+        if len(images) == 0: # If no image pattern found
+            new_nodes.append(old_node)
+            continue
+
+        for image in images:
+            '''
+            Logic: for each image string in images, create a list of sections. 
+            That list shall contain text from the original_text, split by the markdown formatting instead of a delimiter.
+            This splitting should only occur once. Recall the output of extract_markdown_images is a tuple,
+            where the first [0] element is the "alt text" and second [1] element is the "image_url".
+            ''' 
+            sections = original_text.split(f"![{image[0]}]({image[1]})", 1) 
+            if len(sections) != 2: #If not exactly 2 sections exist,
+                raise Exception("Invalid Markdown: Image section not closed")
+            if sections[0] != "": # If there is text before the image, add it as regular TEXT node
+                new_nodes.append(TextNode(sections[0], TextType.TEXT))
+            #otherwise append TextNode of the image
+            new_nodes.append(TextNode(image[0], TextType.IMAGE,image[1]))
+            original_text = sections[1]
+            '''
+            Logic: I set original_text to the second half of the split to allow for situations where multiple
+            images are contained within the text (i.e. "This is ![one](url1) and ![two](url2)").
+            Without overwriting original_text, the next iteration of the loop would split the same original text
+            instead of progressing to the next image's alt text.
+            '''
+        if original_text != "": #if there is a link remaining...
+            new_nodes.append(TextNode(original_text,TextType.TEXT))
+    return new_nodes
+
