@@ -61,13 +61,14 @@ def text_to_children(text):
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
-    html_node = None #Default
+    block_html_nodes = [] #Default empty list
 
     if not blocks: # Return empty or whitespace input to return as empty div using LeafNode as ParentNode requires children
         return LeafNode("div", "")
 
     for block in blocks:
         block_type = block_to_block_type(block)
+        html_node = None # Default to overwrite by BlockType
 
         if block_type == BlockType.PARAGRAPH:
             children = text_to_children(block)
@@ -124,3 +125,8 @@ def markdown_to_html_node(markdown):
 
         else:
             raise ValueError(f"Unknown block type: {block_type}")
+
+        if html_node: # If html_node was created...
+            block_html_nodes.append(html_node)
+    parent_div = ParentNode("div",block_html_nodes)
+    return parent_div
