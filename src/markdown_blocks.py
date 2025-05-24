@@ -93,12 +93,34 @@ def markdown_to_html_node(markdown):
             html_node = ParentNode("pre",[code_html]) # "pre" tag comes from CH4_L3 tip: "Code blocks should be surrounded by a <code> tag nested inside a <pre> tag."
 
         elif block_type == BlockType.QUOTE:
-            pass
+            lines = block.split("\n")
+            processed_lines = []
+            for line in lines:
+                processed_line = line[1:].strip() # Removes ">" and whitespace
+                processed_lines.append(processed_line)
+            processed_text = "\n".join(processed_lines)
+            children = text_to_children(processed_text)
+            html_node = ParentNode("blockquote", children)
 
         elif block_type == BlockType.OLIST:
-            pass
+            lines = block.split('\n')
+            list_items = []
+            for i, line in enumerate(lines):
+                 dot_index = line.find('.') # Using this index removes needing to worry about the ordered list leading number
+                 space_index = line.find(' ', dot_index + 1)
+                 item_text = line[space_index + 1:] # Everything after the space is content, except leading whitespace
+                 children = text_to_children(item_text)
+                 list_items.append(ParentNode("li", children))
+            html_node = ParentNode("ol", list_items)
 
         elif block_type == BlockType.ULIST:
-            pass
+            lines = block.split('\n')
+            list_items = []
+            for line in lines:
+                item_text = line[2:] # Removes leading number and "."
+                children = text_to_children(item_text)
+                list_items.append(ParentNode("li", children))
+            html_node = ParentNode("ul", list_items)
+
         else:
             raise ValueError(f"Unknown block type: {block_type}")
