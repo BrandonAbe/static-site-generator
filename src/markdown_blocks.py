@@ -71,7 +71,8 @@ def markdown_to_html_node(markdown):
         html_node = None # Default to overwrite by BlockType
 
         if block_type == BlockType.PARAGRAPH:
-            children = text_to_children(block)
+            filtered_block = block.replace("\n"," ")
+            children = text_to_children(filtered_block)
             html_node = ParentNode("p",children)
 
         elif block_type == BlockType.HEADING: 
