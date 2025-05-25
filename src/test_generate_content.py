@@ -1,7 +1,9 @@
 import unittest
 from markdown_blocks import (
-    extract_title,
     markdown_to_html_node
+)
+from generate_content import (
+    extract_title,
 )
 
 class TestExtractTitle(unittest.TestCase):
