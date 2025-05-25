@@ -136,28 +136,15 @@ def markdown_to_html_node(markdown):
     parent_div = ParentNode("div",block_html_nodes)
     return parent_div
 
-def copy_contents_recursive(source_dir_path:str, dest_dir_path:str):
-    print(f"Copying contents from {source_dir_path} to {dest_dir_path}")
-
-    # Check if source path exists
-    try:
-        dir_contents = os.listdir(source_dir_path)
-    except FileNotFoundError:
-        print(f"Error: Source directory not found at {source_dir_path}")
-        return
-
-    # Check if destination path exists
+def copy_files_recursive(source_dir_path:str, dest_dir_path:str):
     if not os.path.exists(dest_dir_path):
         os.mkdir(dest_dir_path)
 
-    for item_name in dir_contents:
-        source_item_path = os.path.join(source_dir_path, item_name)
-        dest_item_path = os.path.join(dest_dir_path, item_name)
-
-        if os.path.isfile(source_item_path):
-            print(f"  Copying file: {source_item_path} to {dest_item_path}")
-            shutil.copy(source_item_path, dest_item_path)
-
-        elif os.path.isdir(source_item_path):
-            print(f"  Creating directory: {dest_item_path}")
-            copy_contents_recursive(source_item_path, dest_item_path)
+    for filename in os.listdir(source_dir_path):
+        from_path = os.path.join(source_dir_path, filename)
+        dest_path = os.path.join(dest_dir_path, filename)
+        print(f" * {from_path} -> {dest_path}")
+        if os.path.isfile(from_path):
+            shutil.copy(from_path, dest_path)
+        else:
+            copy_files_recursive(from_path, dest_path)
