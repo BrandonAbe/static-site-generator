@@ -148,3 +148,10 @@ def copy_files_recursive(source_dir_path:str, dest_dir_path:str):
             shutil.copy(from_path, dest_path)
         else:
             copy_files_recursive(from_path, dest_path)
+
+def extract_title(md):
+    lines = md.split("\n")
+    for line in lines:
+        if line.startswith("# "):
+            return line[2:]
+    raise ValueError("No title found")
